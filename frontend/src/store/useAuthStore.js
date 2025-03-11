@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 
+import toast from "react-hot-toast";
+
 export const useAuthStore = create((set) => ({
   authUser: null,
   isSigningUp: false,
@@ -19,5 +21,60 @@ export const useAuthStore = create((set) => ({
     } finally {
       set({isCheckingAuth: false})
     }
+  },
+
+  signup: async (data) => {
+    set({ isSigningUp: true });
+    try {
+      const res = await axiosInstance.post("/auth/signup",data);
+      set({ authUser: res.data });
+
+      toast.success("Account created");
+    
+    } catch (error) {
+      toast.error(error.response.data.message);
+    } finally {
+      set({ isSigningUp: false });
+    }
+  },
+
+  logout: async () => {
+    try {
+      await axiosInstance.post("/auth/logout");
+      set({ authUser: null });
+      toast.success("Loggedout Successfully!");
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  },
+
+  login: async (data) => {
+    set({ isLoggingIn: true });
+
+    try {
+      const res = await axiosInstance.post("/auth/login",data);
+      set({ authUser: res.data });
+
+      toast.success("Login Successful");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    } finally {
+      set({ isLoggingIn: false });
+    }
+  },
+
+  updateProfile: async (data) => {
+    set({ isUpdatingProfile: true });
+    try {
+      const res = await axiosInstance.put("/auth/update-profile",data);
+      set({ authUser: res.data });
+      toast.success("Profile Pic Updated");
+    } catch (error) {
+      toast.error("Something went wrong");
+      console.log(error);
+    } finally {
+      set({ isUpdatingProfile: false });
+    }
   }
+
 })) 

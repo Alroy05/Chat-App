@@ -9,6 +9,7 @@ import { useAuthStore } from "./store/useAuthStore";
 import { Routes,Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Loader } from "lucide-react";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   const { authUser,checkAuth,isCheckingAuth } = useAuthStore();
@@ -16,8 +17,6 @@ function App() {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
-
-  console.log(authUser);
 
   if(isCheckingAuth && !authUser) {
     return (
@@ -38,6 +37,7 @@ function App() {
         <Route  path="/settings" element={<SettingsPage />} />
         <Route  path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login"/>} />
       </Routes>
+      <Toaster />
 
     </div>
   )
